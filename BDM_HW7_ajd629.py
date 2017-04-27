@@ -3,7 +3,7 @@ from pyspark.sql import HiveContext
 from datetime import date, datetime, timedelta
 from geopy.distance import vincenty
 
-def citibike(idx, iterator): 
+def citibikeStream(idx, iterator): 
     if idx == 0:
         iterator.next()
     import csv
@@ -33,7 +33,7 @@ taxi = sc.textFile('/tmp/yellow.csv.gz').cache()
 citibike = sc.textFile('/tmp/citibike.csv').cache()
 
 #Streaming and filtering the RDD
-citibikeRDD = citibike.mapPartitionsWithIndex(citibike)
+citibikeRDD = citibike.mapPartitionsWithIndex(citibikeStream)
 filtered_taxi = taxi.mapPartitionsWithIndex(taxiFilter)
 
 #Converting RDD to Dataframe
