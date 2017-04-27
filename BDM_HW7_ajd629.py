@@ -34,7 +34,7 @@ citibike = sc.textFile('/tmp/citibike.csv').cache()
 
 
 cb = citibike.mapPartitionsWithIndex(citibikeStream)
-yd = yellow.mapPartitionsWithIndex(taxiFilter)
+yd = taxi.mapPartitionsWithIndex(taxiFilter)
 
 
 cb_df = cb.toDF(['started', 'ride'])
