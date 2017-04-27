@@ -23,7 +23,7 @@ def taxiFilter(idx, iterator):
             if (vincenty((40.73901691,-74.00263761), (float(row[4]), float(row[5]))).miles) <= 0.25:
                 dropOffTime = datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S.%f")
                 timePlusTen = dropOffTime + timedelta(seconds = 600)
-                yield startTime,timePlusTen
+                yield dropOffTime,timePlusTen
 
 sc = SparkContext()                
 spark = HiveContext(sc)
