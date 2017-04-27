@@ -34,12 +34,12 @@ citibike = sc.textFile('/tmp/citibike.csv').cache()
 
 
 cb = citibike.mapPartitionsWithIndex(citibikeStream)
-yd = taxi.mapPartitionsWithIndex(taxiFilter)
+yellow = taxi.mapPartitionsWithIndex(taxiFilter)
 
 
-cb_df = cb.toDF(['started', 'ride'])
-yd_df = yd.toDF(['dropped', 'extended'])
+cb_df = cb.toDF(['start_time', 'ride'])
+yellow_df = yellow.toDF(['dropoff_time', 'delta_ten'])
 
-d = yd_df.join(cb_df).filter((yd_df.dropped < cb_df.started) & (yd_df.extended > cb_df.started))
+unique_bike = yellow_df.join(cb_df).filter((yellow_df.dropoff_time < cb_df.start_time) & (yellow_df.delta_ten > cb_df.start_time))
 
-print len(d.toPandas()['ride'].unique())
+print len(unique_bike.toPandas()['ride'].unique())
