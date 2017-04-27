@@ -32,16 +32,14 @@ spark = HiveContext(sc)
 taxi = sc.textFile('/tmp/yellow.csv.gz').cache()
 citibike = sc.textFile('/tmp/citibike.csv').cache()
 
-#Streaming and filtering the RDD
-citibikeRDD = citibike.mapPartitionsWithIndex(citibikeStream)
-filtered_taxi = taxi.mapPartitionsWithIndex(taxiFilter)
 
-#Converting RDD to Dataframe
-citiBikeDataFrame = citibikeRDD.toDF(['startTime', 'rides'])
-taxiDataFrame = filtered_taxi.toDF(['dropoffTime', 'timeDelta'])
+cb = citibike.mapPartitionsWithIndex(citibikeStream)
+yd = yellow.mapPartitionsWithIndex(taxiFilter)
 
-#Joining dataframes to obtain unique citiBike rides
-uniqueRides = taxiDataFrame.join(citiBikeDataFrame).filter((taxiDataFrame.dropoffTime < citiBikeDataFrame.startTime) & (taxiDataFrame.timeDelta > citiBikeDataFrame.startTime))
 
-#Printing the output
-print len(uniqueRides.toPandas()['rides'].unique())
+cb_df = cb.toDF(['started', 'ride'])
+yd_df = yd.toDF(['dropped', 'extended'])
+
+d = yd_df.join(cb_df).filter((yd_df.dropped < cb_df.started) & (yd_df.extended > cb_df.started))
+
+print len(d.toPandas()['ride'].unique())
